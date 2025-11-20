@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { SalmonWindow } from "./salmon_window.js";
+import { SalmonWindow } from "./window.js";
 
 export class SalmonDialog extends SalmonWindow {
     static dialogURL = import.meta.resolve("../../dialog.html");
