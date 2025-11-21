@@ -24,10 +24,18 @@ SOFTWARE.
 
 import { Window } from "./window.js";
 
+/**
+ * Class used to display a context menu
+ */
 export class ContextMenu extends Window {
     static htmlURL = import.meta.resolve("../../context_menu.html");
 
-    constructor(root = document) {
+    /**
+     * Instantiate a context menu.
+     * DO NOT USE this directly, instead use the static method ContextMenu.showContextMenu()
+     * @param {} root The root element inside the window
+     */
+    constructor(root) {
         super(null, root);
         this.root = root;
         this.enableDraggable(false);
@@ -35,6 +43,13 @@ export class ContextMenu extends Window {
         this.enableDismissableOutside(true);
     }
 
+    /**
+     * Display a context menu
+     * @param {string} title 
+     * @param {any[]} menu 
+     * @param {number} x The x coordinate for the window to display
+     * @param {number} y The y coordinate for the window to display
+     */
     static showContextMenu(title, menu, x, y) {
         setTimeout(() => {
             fetch(ContextMenu.htmlURL).then(async (response) => {

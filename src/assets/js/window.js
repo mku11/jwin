@@ -24,6 +24,9 @@ SOFTWARE.
 
 let visibleWindows = new Set();
 
+/**
+ * Class used to display a window
+ */
 export class Window {
     static modalUrl = import.meta.resolve("../../modal.html");
     static zIndex = 0;
@@ -45,6 +48,7 @@ export class Window {
 	
     /**
      * Instantiate a window
+     * DO NOT USE this directly, instead use the static methods like Window.createWindow()
      * @param {string} content The html content of the window
      * @param {any} root The root element inside the window
      */

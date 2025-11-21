@@ -24,6 +24,9 @@ SOFTWARE.
 
 import { Window } from "./window.js";
 
+/**
+ * Class used to display a dialog box
+ */
 export class SalmonDialog extends Window {
     static dialogURL = import.meta.resolve("../../dialog.html");
     static dialogEditURL = import.meta.resolve("../../dialog_edit.html");
@@ -38,10 +41,11 @@ export class SalmonDialog extends Window {
 
     /**
      * Instantiate a dialog box
+     * DO NOT USE this directly, instead use the static methods like Dialog.promptDialog()
      * @param {string} content The html content of the window
-     * @param {*} buttonListener1 Onclick listener for first button
-     * @param {*} buttonListener2 Onclick listener for second button
-     * @param {*} root The root element inside the window
+     * @param {function(string)} buttonListener1 Onclick listener for first button
+     * @param {function(string)} buttonListener2 Onclick listener for second button
+     * @param {function(string)} root The root element inside the window
      */
     constructor(content, buttonListener1 = null, buttonListener2 = null, root = document) {
         super(null, root);
@@ -59,7 +63,7 @@ export class SalmonDialog extends Window {
      * Prompt with an editable text box
      * @param {string} title The title
      * @param {string} msg The message
-     * @param {Function(string)} OnEdit Onedit listener for the input text element
+     * @param {function(string)} OnEdit Onedit listener for the input text element
      * @param {string} value The initial text value
      * @param {boolean} isFileName True if the text should be highlighted as a filename
      * @param {boolean} readOnly True if read only
