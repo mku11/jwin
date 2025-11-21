@@ -22,13 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { WindowUtils } from "./window_utils.js";
-
 let visibleWindows = new Set();
 
-export class SalmonWindow {
+export class Window {
     static modalUrl = import.meta.resolve("../../modal.html");
     static zIndex = 0;
+    static #defaultIconPath;
 
     root;
     icon;
@@ -44,6 +43,22 @@ export class SalmonWindow {
     isDismissableOutside;
 	isModal = false;
 	
+    /**
+     * Instantiate a window
+     * @param {string} content The html content of the window
+     * @param {any} root The root element inside the window
+     */
+    constructor(content, root) {
+        this.root = root;
+        this.setupControls();
+        this.setupIcon();
+        this.setupEventListeners();
+        this.setContent(content);
+        this.enableDraggable(true);
+        this.enableDismissable(true);
+        this.enableDismissableOutside(false);
+    }
+    
     getRoot() {
         return this.root;
     }
@@ -52,35 +67,79 @@ export class SalmonWindow {
         return this.modal;
     }
     
+    static setDefaultIconPath(iconPath) {
+        Window.#defaultIconPath = iconPath;
+    }
+
+    static getDefaultIcon() {
+        return Window.#defaultIconPath;
+    }
+
+    
+    setIconPath(iconPath) {
+        this.icon.src = iconPath;
+    }
+
+    getIconPath() {
+        return this.icon.src;
+    }
+
     setupIcon() {
-        let icon = WindowUtils.getDefaultIcon();
-        this.icon.src = icon;
+        this.icon.src = Window.#defaultIconPath;
     }
 
-    constructor(content, root = document) {
-        this.root = root;
-        this.setupControls();
-        this.setupIcon();
-        this.setupEventListeners();
-        this.#setContent(content);
-        this.enableDraggable(true);
-        this.enableDismissable(true);
-        this.enableDismissableOutside(false);
+    /**
+     * 
+     * @param {string} title The title of the window
+     * @param {string} url The url that contains the html content in the window
+     * @returns The window
+     */
+    static async createModalWithURL(title, url) {
+		return Window.createWindowWithURL(title, url, true);
     }
 
+    /**
+     * 
+     * @param {string} title The title of the window
+     * @param {string} content The html content of the window
+     * @returns The window
+     */
     static async createModal(title, content) {
-		return SalmonWindow.createWindow(title, content, true);
+		return Window.createWindow(title, content, true);
     }
 
+    /**
+     * 
+     * @param {string} title 
+     * @param {string} url The url that contains the html content in the window
+     * @returns The window
+     */
+    static async createWindowWithURL(title, url) {
+        return new Promise((resolve, reject) => {
+            fetch(url).then(async (response) => {
+                let content = await response.text();
+		        let window = Window.createWindow(title, content, true);
+                resolve(window);
+            });
+        });
+    }
+
+    /**
+     * 
+     * @param {string} title The title of the window
+     * @param {*} content The html content of the window
+     * @param {boolean} isModal True if window should be modal
+     * @returns 
+     */
 	static async createWindow(title, content, isModal = false) {
         return new Promise((resolve, reject) => {
-            fetch(SalmonWindow.modalUrl).then(async (response) => {
+            fetch(Window.modalUrl).then(async (response) => {
                 let docBody = document.getElementsByTagName("body")[0];
                 var div = document.createElement('div');
                 div.id = "modal-" + Math.floor(Math.random() * 1000000);
                 div.innerHTML = await response.text();
                 docBody.appendChild(div);
-                let window = new SalmonWindow(content, div);
+                let window = new Window(content, div);
 				window.isModal = isModal;
                 window.setTitle(title);
                 resolve(window);
@@ -143,6 +202,10 @@ export class SalmonWindow {
 		}
     }
 
+    /**
+     * Allow the windows to be dragged
+     * @param {boolean} value True to be able to drag the window
+     */
     enableDraggable(value) {
         this.isDraggable = value;
         if(value === true)
@@ -151,6 +214,10 @@ export class SalmonWindow {
             this.titleBar.style.cursor = "auto";
     }
 
+    /**
+     * Allow the windows to be closed
+     * @param {boolean} value True to be dismissed
+     */
     enableDismissable(value) {
         this.isDismissable = value;
         if(value === true)
@@ -159,11 +226,15 @@ export class SalmonWindow {
             this.closeButton.style.display = "none";
     }
 
+    /**
+     * Allow the window to be closed when a click outside is detected
+     * @param {boolean} value True to be dismissed
+     */
     enableDismissableOutside(value) {
         this.isDismissableOutside = value;
     }
 
-    #setContent(content) {
+    setContent(content) {
         if(content != null) {
             var div = document.createElement('div');
             div.innerHTML = content;
@@ -171,14 +242,21 @@ export class SalmonWindow {
         }
     }
 
+    /**
+     * Set the title
+     * @param {string} title The title
+     */
     setTitle(title) {
         this.title.innerText = title;
     }
 
+    /**
+     * Display the window
+     */
     show() {
         this.modal.style.display = "block";
-        SalmonWindow.zIndex += 2;
-        this.modal.style.zIndex = SalmonWindow.zIndex;
+        Window.zIndex += 2;
+        this.modal.style.zIndex = Window.zIndex;
 		if(this.isModal)
 	        this.disableSiblings(true);
         visibleWindows.add(this);
@@ -186,12 +264,15 @@ export class SalmonWindow {
             this.onShow();
     }
 
+    /**
+     * Close the window
+     */
     hide() {
         this.modal.style.display = "none";
 		if(this.isModal)
 	        this.disableSiblings(false);
         this.modal.parentElement.parentElement.removeChild(this.modal.parentElement);
-        SalmonWindow.zIndex -= 2;
+        Window.zIndex -= 2;
         visibleWindows.delete(this);
         if(this.onClose != null)
             this.onClose();

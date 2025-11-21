@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { SalmonWindow } from "./window.js";
+import { Window } from "./window.js";
 
-export class SalmonDialog extends SalmonWindow {
+export class SalmonDialog extends Window {
     static dialogURL = import.meta.resolve("../../dialog.html");
     static dialogEditURL = import.meta.resolve("../../dialog_edit.html");
     static dialogSelectURL = import.meta.resolve("../../dialog_select.html");
@@ -36,6 +36,13 @@ export class SalmonDialog extends SalmonWindow {
     firstButton;
     secondButton;
 
+    /**
+     * Instantiate a dialog box
+     * @param {string} content The html content of the window
+     * @param {*} buttonListener1 Onclick listener for first button
+     * @param {*} buttonListener2 Onclick listener for second button
+     * @param {*} root The root element inside the window
+     */
     constructor(content, buttonListener1 = null, buttonListener2 = null, root = document) {
         super(null, root);
         this.root = root;
@@ -50,14 +57,14 @@ export class SalmonDialog extends SalmonWindow {
 
     /**
      * Prompt with an editable text box
-     * @param {string} title 
-     * @param {string} msg 
-     * @param {*} OnEdit 
-     * @param {string} value 
-     * @param {boolean} isFileName 
-     * @param {boolean} readOnly 
-     * @param {boolean} isPassword 
-     * @param {boolean} option 
+     * @param {string} title The title
+     * @param {string} msg The message
+     * @param {Function(string)} OnEdit Onedit listener for the input text element
+     * @param {string} value The initial text value
+     * @param {boolean} isFileName True if the text should be highlighted as a filename
+     * @param {boolean} readOnly True if read only
+     * @param {boolean} isPassword True if the value should be hidden as a password
+     * @param {string} option Label for an optional checkbox
      */
     static promptEdit(title, msg, OnEdit, value = "", isFileName = false, readOnly = false, isPassword = false, option = null) {
         setTimeout(() => {
@@ -81,13 +88,13 @@ export class SalmonDialog extends SalmonWindow {
     }
 
     /**
-     * 
-     * @param {string} title 
-     * @param {string} msg 
-     * @param {string[]} hints 
-     * @param {string[]} values 
-     * @param {boolean[]} isPasswords 
-     * @param {*} OnEdit 
+     * Show a dialog prompt for passwords
+     * @param {string} title The title
+     * @param {string} msg The message
+     * @param {string[]} hints The hint
+     * @param {string[]} values The initial values for each password
+     * @param {boolean[]} isPasswords A list of booleans for each value indicating if it should be hidden as a password
+     * @param {function(string[])} OnEdit Onedit listener
      */
     static promptCredentialsEdit(title, msg, hints, values, isPasswords, OnEdit) {
         setTimeout(() => {
@@ -126,13 +133,6 @@ export class SalmonDialog extends SalmonWindow {
         });
     }
 
-    /**
-     * 
-     * @param {*} hint 
-     * @param {*} value 
-     * @param {*} isPassword 
-     * @returns 
-     */
     static createTextField(hint, value, isPassword) {
         let valueText = document.createElement("div");
         valueText.classList.add("dialog-text-input-container");
@@ -150,6 +150,16 @@ export class SalmonDialog extends SalmonWindow {
         return valueText;
     }
 
+    /**
+     * Prompt user for action
+     * 
+     * @param {string} title The title
+     * @param {*} body The contents
+     * @param {string} buttonLabel1 The label for the first button
+     * @param {function(string)} buttonListener1 Onclick listener for the first button
+     * @param {string} buttonLabel2 The label for the second button
+     * @param {function(string)} buttonListener2 Onclick listener for the second button
+     */
     static promptDialog(title, body,
         buttonLabel1 = "Ok", buttonListener1 = null,
         buttonLabel2 = null, buttonListener2 = null) {
@@ -169,6 +179,13 @@ export class SalmonDialog extends SalmonWindow {
         });
     }
 
+    /**
+     * Prompt user for a selection from a list
+     * @param {string} title The title
+     * @param {string[]} items The items of the list
+     * @param {int} currSelection The index of the default selection
+     * @param {function(int)} onClickListener Onclick listener for the item selected
+     */
     static promptSingleValue(title, items, currSelection, onClickListener) {
         setTimeout(() => {
             fetch(SalmonDialog.dialogSelectURL).then(async (response) => {

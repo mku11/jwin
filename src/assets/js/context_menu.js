@@ -22,9 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import { SalmonWindow } from "./salmon_window.js";
+import { Window } from "./window.js";
 
-export class ContextMenu extends SalmonWindow {
+export class ContextMenu extends Window {
     static htmlURL = import.meta.resolve("../../context_menu.html");
 
     constructor(root = document) {
