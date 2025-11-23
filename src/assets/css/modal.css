@@ -4,7 +4,7 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  overflow: auto;
+  overflow: hidden;
   min-width: 300pt;
   background-color: #2d3343FF;
   margin: 2pt;
@@ -18,19 +18,24 @@
 
 .modal-icon {
   width: 20pt;
+  vertical-align: middle;
   height: 20pt;
 }
 
 .modal-title {
-  vertical-align: middle;
+  padding-left: 4px;
   display: table-cell;
+}
+
+.modal-title-container {
+  vertical-align: middle;
 }
 
 .modal-close {
   vertical-align: middle;
   display: table-cell;
   float: right;
-  font-size: 22pt;
+  font-size: 18pt;
   font-weight: bold;
   margin-right: 4pt;
 }

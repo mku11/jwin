@@ -3,11 +3,11 @@
 }
 
 .context-menu-container {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Garamond, serif;
 }
 
 .context-menu-container a {
-  font-size: 10pt;
+  font-size: 12pt;
   color: white;
   text-align: center;
   padding: 8pt 8pt;
