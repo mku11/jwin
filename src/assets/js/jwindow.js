@@ -324,7 +324,7 @@ export class JWindow {
     static setupListener() {
         if(JWindow.globalListenerSet)
             return;
-        window.addEventListener("click", function (event) {
+        window.addEventListener("mousedown", function (event) {
             let topWindow = JWindow.getTopWindow();
             for (let jwindow of JWindow.visibleWindows) {
                 let hit = JWindow.contains(jwindow.root, event.target);
