@@ -56,10 +56,6 @@ export class JWindow {
         
     }
 
-    getRoot() {
-        return this.root;
-    }
-
     /**
      * Get the window panel
      * @returns {Element} The window panel
