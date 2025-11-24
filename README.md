@@ -19,8 +19,8 @@ Published under MIT License
 
 ## Window Examples
 
-1. Include JWin css  
-HTML:  
+1. Include JWin css    
+  
 ```
 <head>
     <link rel="stylesheet" type="text/css" href="assets/js/lib/jwin/assets/css/window.css">
@@ -31,16 +31,14 @@ HTML:
 </head>
 ```
   
-JS:  
-  
-1. Import the JWin modules  
+2. Import the JWin modules  
 ```
 import { JWindow } from "./jwin/assets/js/jwindow.js";
 import { JContextMenu } from "./jwin/assets/js/jcontext_menu.js";
 import { JMenuBar, JMenuItem, JMenuSubItem } from "./jwin/assets/js/jmenu_bar.js";
 ```
   
-2. Create a window  
+3. Create a window  
 ```
 // With custom HTML content
 let myWindow = await JWindow.createWindow("My Window", htmlContent, isModal);
@@ -55,7 +53,7 @@ let myWindow = await JWindow.createModal("My Modal Window", htmlContent);
 let myWindow = await JWindow.createModalWithURL("My Modal Window", this.contentURL);
 ```
 
-3. Set the window properties  
+4. Set the window properties  
 ```
 myWindow.setIconPath("assets/images/app_icon.png");
 myWindow.setResizable(true);
@@ -66,7 +64,7 @@ myWindow.enableDismissable(true); // displays close button
 myWindow.enableDismissableOutside(false); // set to true to close window if user clicks outside
 ```
 
-4. Setup a menu bar  
+5. Setup a menu bar  
 ```
 let menuBar = new JMenuBar();
 let fileMenuItem = new JMenuItem("fileMenu", "File"); // top level menu dropdown item
@@ -85,7 +83,7 @@ fileMenuItem.addMenuItem(subItem);
 myWindow.setMenuBar(menuBar);
 ```
 
-5. Setup a context menu (optional)  
+6. Setup a context menu (optional)  
 ```
 let contextMenu = {};
 contextMenu["Copy"] = { 
@@ -105,11 +103,12 @@ myElement.oncontextmenu = (event) => {
 });
 ```
 
-6. Show the window  
+7. Show the window  
 ```
 myWindow.show();
 ```
-
+  
+  
 ## Dialog Examples
   
 1. Simple notification dialog  
