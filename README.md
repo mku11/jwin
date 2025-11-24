@@ -139,7 +139,7 @@ JDialog.promptEdit("Upload", "Enter filename:", async (filename, option) => {
 	}, isFilename, readOnly, isPassword, option);
 ```
 	
-4. Prompt dialog with multple inputs
+4. Prompt dialog with multiple inputs
 ```
 JDialog.promptCredentialsEdit("Login",
 	"Enter your credentials",
