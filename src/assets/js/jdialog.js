@@ -45,16 +45,15 @@ export class JDialog extends JWindow {
      * @param {string} content The html content of the window
      * @param {function(string)} buttonListener1 Onclick listener for first button
      * @param {function(string)} buttonListener2 Onclick listener for second button
-     * @param {function(string)} root The root element inside the window
      */
-    constructor(content, buttonListener1 = null, buttonListener2 = null, root = document) {
-        super(null, root);
-        this.root = root;
+    init(dialogContent, content, buttonListener1 = null, buttonListener2 = null) {
         this.isModal = true;
+        this.createRoot(dialogContent, content);
         this.setupControls();
         this.setupIcon();
         this.setupEventListeners();
         this.#setTextContent(content);
+        this.enableDraggable(true);
         this.setFirstButton("Ok", buttonListener1);
         if (buttonListener2 != null)
             this.setSecondButton("Cancel", buttonListener2);
@@ -74,12 +73,9 @@ export class JDialog extends JWindow {
     static promptEdit(title, msg, OnEdit, value = "", isFileName = false, readOnly = false, isPassword = false, option = null) {
         setTimeout(() => {
             fetch(JDialog.dialogEditURL).then(async (response) => {
-                let docBody = document.getElementsByTagName("body")[0];
-                var div = document.createElement('div');
-                div.id = "modal-" + Math.floor(Math.random() * 1000000);
-                div.innerHTML = await response.text();
-                docBody.appendChild(div);
-                let dialog = new JDialog(msg, "Ok", null, div);
+                let dialogContent = await response.text();
+                let dialog = new JDialog();
+                dialog.init(dialogContent, msg, "Ok", null);
                 dialog.setTitle(title);
                 dialog.setValue(value, isFileName, readOnly, isPassword);
                 dialog.setOption(option);
@@ -104,12 +100,9 @@ export class JDialog extends JWindow {
     static promptCredentialsEdit(title, msg, hints, values, isPasswords, OnEdit) {
         setTimeout(() => {
             fetch(JDialog.dialogURL).then(async (response) => {
-                let docBody = document.getElementsByTagName("body")[0];
-                var div = document.createElement('div');
-                div.id = "modal-" + Math.floor(Math.random() * 1000000);
-                div.innerHTML = await response.text();
-                docBody.appendChild(div);
-                let dialog = new JDialog(msg, "Ok", null, div);
+                let dialogContent = await response.text();
+                let dialog = new JDialog();
+                dialog.init(dialogContent, msg, "Ok", null);
                 dialog.setTitle(title);
                 // add the text boxes
                 var divBody = document.createElement('div');
@@ -140,13 +133,13 @@ export class JDialog extends JWindow {
 
     static createTextField(hint, value, isPassword) {
         let valueText = document.createElement("div");
-        valueText.classList.add("dialog-text-input-container");
+        valueText.classList.add("jdialog-text-input-container");
         let label = document.createElement("label");
         label.innerText = hint;
-        label.classList.add("dialog-text-input-label");
+        label.classList.add("jdialog-text-input-label");
         valueText.appendChild(label);
         let text = document.createElement("input");
-        text.classList.add("dialog-text-input");
+        text.classList.add("jdialog-text-input");
         text.value = value;
         valueText.appendChild(text);
         if (isPassword) {
@@ -170,12 +163,9 @@ export class JDialog extends JWindow {
         buttonLabel2 = null, buttonListener2 = null) {
         setTimeout(() => {
             fetch(JDialog.dialogURL).then(async (response) => {
-                let docBody = document.getElementsByTagName("body")[0];
-                var div = document.createElement('div');
-                div.id = "modal-" + Math.floor(Math.random() * 1000000);
-                div.innerHTML = await response.text();
-                docBody.appendChild(div);
-                let dialog = new JDialog(body, null, null, div);
+                let dialogContent = await response.text();
+                let dialog = new JDialog();
+                dialog.init(dialogContent, body, null, null);
                 dialog.setTitle(title);
                 dialog.setFirstButton(buttonLabel1, buttonListener1);
                 dialog.setSecondButton(buttonLabel2, buttonListener2);
@@ -194,15 +184,12 @@ export class JDialog extends JWindow {
     static promptSingleValue(title, items, currSelection, onClickListener) {
         setTimeout(() => {
             fetch(JDialog.dialogSelectURL).then(async (response) => {
-                let docBody = document.getElementsByTagName("body")[0];
-                var div = document.createElement('div');
-                div.id = "modal-" + Math.floor(Math.random() * 1000000);
-                div.innerHTML = await response.text();
-                docBody.appendChild(div);
-                let dialog = new JDialog(null, "Ok", null, div);
+                let dialogContent = await response.text();
+                let dialog = new JDialog();
+                dialog.init(dialogContent, null, "Ok", null);
                 dialog.setTitle(title);
 
-                let selection = document.getElementsByName("modal-select")[0];
+                let selection = document.getElementsByName("jdialog-select")[0];
                 for(let i=0; i<items.length; i++) {
                     let option = document.createElement('option');
                     option.value = items[i];
@@ -224,14 +211,14 @@ export class JDialog extends JWindow {
 
     setupControls() {
         super.setupControls();
-        this.text = this.root.getElementsByClassName("modal-text")[0];
-        this.container = this.root.getElementsByClassName("dialog-container")[0];
-        this.input = this.root.getElementsByClassName("dialog-input")[0];
-        this.option = this.root.getElementsByClassName("dialog-option")[0];
-        this.optionText = this.root.getElementsByClassName("dialog-option-text")[0];
-        this.firstButton = this.root.getElementsByClassName("dialog-button-first")[0];
-        this.secondButton = this.root.getElementsByClassName("dialog-button-second")[0];
-        this.modal.style.resize = "none";
+        this.text = this.root.getElementsByClassName("jwindow-text")[0];
+        this.container = this.root.getElementsByClassName("jdialog-container")[0];
+        this.input = this.root.getElementsByClassName("jdialog-input")[0];
+        this.option = this.root.getElementsByClassName("jdialog-option")[0];
+        this.optionText = this.root.getElementsByClassName("jdialog-option-text")[0];
+        this.firstButton = this.root.getElementsByClassName("jdialog-button-first")[0];
+        this.secondButton = this.root.getElementsByClassName("jdialog-button-second")[0];
+        this.windowPanel.style.resize = "none";
     }
 
     #setTextContent(content) {

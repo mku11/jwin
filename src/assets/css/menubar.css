@@ -1,11 +1,11 @@
-.menu-container {
+.jmenu-container {
   color: aliceblue;
   overflow: hidden;
   font-family: Arial, Helvetica, sans-serif;
   margin: 4px 0px 4px 0px;
 }
 
-.menu-container a {
+.jmenu-container a {
   float: left;
   font-size: 10pt;
   color: white;
@@ -14,12 +14,12 @@
   text-decoration: none;
 }
 
-.dropdown {
+.jmenu-dropdown {
   float: left;
   overflow: hidden;
 }
 
-.dropdown .dropbtn {
+.jmenu-dropdown .jmenu-dropbtn {
   cursor: pointer;
   font-size: 10pt;
   border: none;
@@ -30,7 +30,7 @@
   font-family: inherit;
 }
 
-.dropdown-content {
+.jmenu-dropdown-content {
   display: none;
   position: absolute;
   background-color: #41485d;
@@ -38,7 +38,7 @@
   z-index: 3;
 }
 
-.dropdown-content a {
+.jmenu-dropdown-content a {
   float: none;
   padding: 6pt;
   text-decoration: none;
@@ -46,11 +46,11 @@
   text-align: left;
 }
 
-.show {
+.jmenu-visible {
   display: block;
 }
 
-.menu-item-image {
+.jmenu-item-image {
     vertical-align: middle;
     width: 1.5 em;
     height: 1.5 em;

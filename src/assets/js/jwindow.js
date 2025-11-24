@@ -34,7 +34,7 @@ export class JWindow {
 
     root;
     icon;
-    modal;
+    windowPanel;
     closeButton;
     titleBar;
     title;
@@ -51,27 +51,17 @@ export class JWindow {
     /**
      * Instantiate a window
      * DO NOT USE this directly, instead use the static methods like Window.createWindow()
-     * @param {string} content The html content of the window
-     * @param {any} root The root element inside the window
      */
-    constructor(content, root) {
-        this.root = root;
-        JWindow.setupListener();
-        this.setupControls();
-        this.setupIcon();
-        this.setupEventListeners();
-        this.setContent(content);
-        this.enableDraggable(true);
-        this.enableDismissable(true);
-        this.enableDismissableOutside(false);
+    constructor() {
+        
     }
 
     getRoot() {
         return this.root;
     }
 
-    getModal() {
-        return this.modal;
+    getWindowPanel() {
+        return this.windowPanel;
     }
 
     static setDefaultIconPath(iconPath) {
@@ -86,7 +76,7 @@ export class JWindow {
         let maxZIndex = 0;
         let topWindow;
         for (let window of JWindow.visibleWindows) {
-            let zIndex = parseInt(window.modal.style.zIndex);
+            let zIndex = parseInt(window.windowPanel.style.zIndex);
             if (maxZIndex < zIndex) {
                 maxZIndex = zIndex;
                 topWindow = window;
@@ -159,14 +149,11 @@ export class JWindow {
      * @returns 
      */
     static async createWindow(title, content, isModal = false) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             fetch(JWindow.windowUrl).then(async (response) => {
-                let docBody = document.getElementsByTagName("body")[0];
-                var div = document.createElement('div');
-                div.id = "modal-" + Math.floor(Math.random() * 1000000);
-                div.innerHTML = await response.text();
-                docBody.appendChild(div);
-                let window = new JWindow(content, div);
+                let windowContent = await response.text();
+                let window = new JWindow();
+                await window.init(windowContent, content);
                 window.isModal = isModal;
                 window.setTitle(title);
                 resolve(window);
@@ -174,14 +161,35 @@ export class JWindow {
         });
     }
 
+    async init(windowContent, content) {
+        JWindow.setupListener();
+        await this.createRoot(windowContent);
+        this.setupControls();
+        this.setupIcon();
+        this.setupEventListeners();
+        this.setContent(content);
+        this.enableDraggable(true);
+        this.enableDismissable(true);
+        this.enableDismissableOutside(false);
+    }
+
+    async createRoot(windowContent) {
+        let docBody = document.getElementsByTagName("body")[0];
+        var div = document.createElement('div');
+        div.id = "jwindow-" + Math.floor(Math.random() * 100000000);
+        div.innerHTML = windowContent;
+        docBody.appendChild(div);
+        this.root = div;
+    }
+
     setupControls() {
-        this.modal = this.root.getElementsByClassName("modal")[0];
-        this.icon = this.root.getElementsByClassName("modal-icon")[0];
-        this.titleBar = this.root.getElementsByClassName("modal-title-bar")[0];
-        this.title = this.root.getElementsByClassName("modal-title")[0];
-        this.closeButton = this.root.getElementsByClassName("modal-close")[0];
-        this.menu = this.root.getElementsByClassName("modal-window-menubar")[0];
-        this.content = this.root.getElementsByClassName("modal-window-content")[0];
+        this.windowPanel = this.root.getElementsByClassName("jwindow-panel")[0];
+        this.icon = this.root.getElementsByClassName("jwindow-icon")[0];
+        this.titleBar = this.root.getElementsByClassName("jwindow-title-bar")[0];
+        this.title = this.root.getElementsByClassName("jwindow-title")[0];
+        this.closeButton = this.root.getElementsByClassName("jwindow-close")[0];
+        this.menu = this.root.getElementsByClassName("jwindow-menubar")[0];
+        this.content = this.root.getElementsByClassName("jwindow-content")[0];
     }
 
     setupEventListeners() {
@@ -195,32 +203,32 @@ export class JWindow {
     setDraggable(el) {
         let down;
         let dx, dy;
-        let modalWindow = this;
+        let currWindow = this;
 
         el.addEventListener('mousedown', function (e) {
-            if (!modalWindow.isDraggable)
+            if (!currWindow.isDraggable)
                 return;
             event.preventDefault();
             down = true;
-            dx = modalWindow.modal.offsetLeft - e.clientX;
-            dy = modalWindow.modal.offsetTop - e.clientY;
+            dx = currWindow.windowPanel.offsetLeft - e.clientX;
+            dy = currWindow.windowPanel.offsetTop - e.clientY;
             // set the global listener to prevent interruptions
             document.onmouseup = stopMoveElement;
             document.onmousemove = moveElement;
         }, true);
 
         function moveElement(event) {
-            if (!modalWindow.isDraggable)
+            if (!currWindow.isDraggable)
                 return;
             if (down) {
-                modalWindow.modal.style.left = (event.clientX + dx) + 'px';
-                modalWindow.modal.style.top = (event.clientY + dy) + 'px';
+                currWindow.windowPanel.style.left = (event.clientX + dx) + 'px';
+                currWindow.windowPanel.style.top = (event.clientY + dy) + 'px';
             }
             event.preventDefault();
         }
 
         function stopMoveElement(event) {
-            if (!modalWindow.isDraggable)
+            if (!currWindow.isDraggable)
                 return;
             event.preventDefault();
             down = false;
@@ -282,9 +290,9 @@ export class JWindow {
      * Display the window
      */
     show() {
-        this.modal.style.display = "block";
+        this.windowPanel.style.display = "block";
         JWindow.zIndex += 2;
-        this.modal.style.zIndex = JWindow.zIndex;
+        this.windowPanel.style.zIndex = JWindow.zIndex;
         if (this.isModal)
             this.disableSiblings(true);
         this.setupMenu();
@@ -298,14 +306,14 @@ export class JWindow {
             return;
         window.addEventListener("click", function (event) {
             let topWindow = JWindow.getTopWindow();
-            for (let modalWindow of JWindow.visibleWindows) {
-                let hit = JWindow.contains(modalWindow.getRoot(), event.target);
-                if (modalWindow.isDismissableOutside && !hit) {
-                    modalWindow.hide.call(modalWindow);
+            for (let jwindow of JWindow.visibleWindows) {
+                let hit = JWindow.contains(jwindow.getRoot(), event.target);
+                if (jwindow.isDismissableOutside && !hit) {
+                    jwindow.hide.call(jwindow);
                 } 
-                else if(hit && topWindow != modalWindow && !topWindow.isModal) {
+                else if(hit && topWindow != jwindow && !topWindow.isModal) {
                     JWindow.zIndex += 2;
-                    modalWindow.modal.style.zIndex = JWindow.zIndex;
+                    jwindow.windowPanel.style.zIndex = JWindow.zIndex;
                 }
             }
         });
@@ -325,24 +333,24 @@ export class JWindow {
      * Close the window
      */
     hide() {
-        this.modal.style.display = "none";
+        this.windowPanel.style.display = "none";
         if (this.isModal)
             this.disableSiblings(false);
-        this.modal.parentElement.parentElement.removeChild(this.modal.parentElement);
+        this.windowPanel.parentElement.parentElement.removeChild(this.windowPanel.parentElement);
         JWindow.visibleWindows.delete(this);
         if (this.onClose != null)
             this.onClose();
     }
 
     disableSiblings(value) {
-        let parent = this.modal.parentElement.parentElement;
+        let parent = this.windowPanel.parentElement.parentElement;
         for (let i = parent.childNodes.length - 1; i >= 0; i--) {
             let element = parent.childNodes[i];
-            if (element.style && element != this.modal.parentElement) {
+            if (element.style && element != this.windowPanel.parentElement) {
                 if (value) {
-                    element.classList.add("is-disabled");
+                    element.classList.add("jwindow-close-disabled");
                 } else {
-                    element.classList.remove("is-disabled");
+                    element.classList.remove("jwindow-close-disabled");
                 }
                 break;
             }

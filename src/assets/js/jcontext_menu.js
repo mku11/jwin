@@ -55,15 +55,15 @@ export class JContextMenu extends JWindow {
             fetch(JContextMenu.htmlURL).then(async (response) => {
                 let docBody = document.getElementsByTagName("body")[0];
                 var div = document.createElement('div');
-                div.id = "modal-" + Math.floor(Math.random() * 1000000);
+                div.id = "jcontext-menu-" + Math.floor(Math.random() * 1000000);
                 div.innerHTML = await response.text();
-                let contextMenuDiv = div.getElementsByClassName('context-menu-content')[0];
+                let contextMenuDiv = div.getElementsByClassName('jcontext-menu-content')[0];
                 for(let [k,v] of Object.entries(menu)) {
                     let menuItemDiv = document.createElement('a');
                     let menuItemImage = document.createElement("img");
                     let menuItemText = document.createTextNode(v.name);
-                    menuItemImage.classList.add("menu-item-image");
-                    menuItemImage.classList.add("context-menu-item-image");
+                    menuItemImage.classList.add("jmenu-item-image");
+                    menuItemImage.classList.add("jcontext-menu-item-image");
                     menuItemImage.src = v.icon;
                     menuItemDiv.style.cursor = "pointer";
                     menuItemDiv.appendChild(menuItemImage);
@@ -79,14 +79,14 @@ export class JContextMenu extends JWindow {
 
                 dialog.setTitle(title);
                 dialog.show();
-                dialog.getModal().style.left = x + "px";
-                dialog.getModal().style.top = y + "px";
+                dialog.getWindowPanel().style.left = x + "px";
+                dialog.getWindowPanel().style.top = y + "px";
             });
         });
     }
 
     setupControls() {
         super.setupControls();
-        this.modal.style.resize = "none";
+        this.windowPanel.style.resize = "none";
     }
 }

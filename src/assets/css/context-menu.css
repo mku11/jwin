@@ -1,12 +1,12 @@
-.context-menu {
+.jcontext-menu {
   transform: none !important;
 }
 
-.context-menu-container {
+.jcontext-menu-container {
   font-family: Garamond, serif;
 }
 
-.context-menu-container a {
+.jcontext-menu-container a {
   font-size: 12pt;
   color: white;
   text-align: center;
@@ -14,27 +14,27 @@
   text-decoration: none;
 }
 
-.context-menu-container a:hover {
+.jcontext-menu-container a:hover {
   background-color: rgb(113, 111, 126);
 }
 
-.context-menu-content {
+.jcontext-menu-content {
   min-width: 160pt;
   z-index: 3;
 }
 
-.context-menu-content a {
+.jcontext-menu-content a {
   padding: 6pt;
   text-decoration: none;
   display: block;
   text-align: left;
 }
 
-.context-menu {
+.jcontext-menu {
   min-width: 200pt;
 }
 
-.context-menu-item-image {
+.jcontext-menu-item-image {
   width: 20px;
   height: 20px;
   padding-right: 6pt;

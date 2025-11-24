@@ -1,4 +1,4 @@
-.modal {
+.jwindow-panel {
   display: none;
   position: absolute;
   left: 50%;
@@ -12,26 +12,26 @@
   border: 1pt solid #888;
 }
 
-.modal-title-bar {
+.jwindow-title-bar {
   background-color: #41485d;
 }
 
-.modal-icon {
+.jwindow-icon {
   width: 20pt;
   vertical-align: middle;
   height: 20pt;
 }
 
-.modal-title {
+.jwindow-title {
   padding-left: 4px;
   display: table-cell;
 }
 
-.modal-title-container {
+.jwindow-title-container {
   vertical-align: middle;
 }
 
-.modal-close {
+.jwindow-close {
   vertical-align: middle;
   display: table-cell;
   float: right;
@@ -40,12 +40,12 @@
   margin-right: 4pt;
 }
 
-.modal-close:hover,
-.modal-close:focus {
+.jwindow-close:hover,
+.jwindow-close:focus {
   text-decoration: none;
   cursor: pointer;
 }
 
-.is-disabled {
+.jwindow-close-disabled {
   pointer-events: none;
 }

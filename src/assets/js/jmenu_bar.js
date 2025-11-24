@@ -39,13 +39,13 @@ export class JMenuBar {
     if(JMenuBar.globalListenerSet)
       return;
     window.addEventListener("click", function (event) {
-      if (!event.target.matches('.dropbtn')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
+      if (!event.target.matches('.jmenu-dropbtn')) {
+        var dropdowns = document.getElementsByClassName("jmenu-dropdown-content");
         var i;
         for (i = 0; i < dropdowns.length; i++) {
           var openDropdown = dropdowns[i];
-          if (openDropdown.classList.contains('show')) {
-            openDropdown.classList.remove('show');
+          if (openDropdown.classList.contains("jmenu-visible")) {
+            openDropdown.classList.remove("jmenu-visible");
           }
         }
       }
@@ -65,25 +65,23 @@ export class JMenuBar {
 
   getMenuBarElement() {
     let menuContainer = document.createElement("div");
-    menuContainer.classList.add("menu-container");
+    menuContainer.classList.add("jmenu-container");
     for (let item of this.#items) {
       let menuItemContainer = document.createElement("div");
       menuItemContainer.classList.add(item.name);
-      menuItemContainer.classList.add("dropdown");
+      menuItemContainer.classList.add("jmenu-dropdown");
       menuContainer.appendChild(menuItemContainer);
 
       let drpName = item.name + "DropDown";
       let menuItemButton = document.createElement("button");
       menuItemButton.onclick = () => this.onMenuClicked(drpName);
-      menuItemButton.classList.add("dropbtn");
+      menuItemButton.classList.add("jmenu-dropbtn");
       menuItemButton.innerText = item.title;
-      menuItemButton.classList.add("fa");
-      menuItemButton.classList.add("fa-caret-down");
       menuItemContainer.appendChild(menuItemButton);
 
       let menuSubItems = document.createElement("div");
       menuSubItems.classList.add(drpName);
-      menuSubItems.classList.add("dropdown-content");
+      menuSubItems.classList.add("jmenu-dropdown-content");
       menuItemContainer.appendChild(menuSubItems);
 
       for (let subItem of item.getChildren()) {
@@ -92,12 +90,12 @@ export class JMenuBar {
         menuSubItem.onclick = subItem.onclick;
 
         let menuSubItemIcon = document.createElement("img");
-        menuSubItemIcon.classList.add("menu-item-image");
+        menuSubItemIcon.classList.add("jmenu-item-image");
         menuSubItemIcon.src = subItem.icon;
         menuSubItem.appendChild(menuSubItemIcon);
 
         let menuSubItemLabel = document.createElement("span");
-        menuSubItemLabel.classList.add("unselectable");
+        menuSubItemLabel.classList.add("jmenu-unselectable");
         menuSubItemLabel.innerText = subItem.title;
         menuSubItem.appendChild(menuSubItemLabel);
       }
@@ -108,11 +106,10 @@ export class JMenuBar {
 
   onMenuClicked(el) {
     if (this.#lastItem)
-      this.#lastItem.classList.remove('show');
+      this.#lastItem.classList.remove("jmenu-visible");
     this.#lastItem = this.menuContainer.getElementsByClassName(el)[0];
-    this.#lastItem.classList.toggle("show");
+    this.#lastItem.classList.toggle("jmenu-visible");
   }
-
 }
 
 /**
