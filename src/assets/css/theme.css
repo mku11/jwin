@@ -28,6 +28,8 @@
 .jmenu-container {
     background-color: white;
     background-image: linear-gradient(to bottom, #2d3343BB, #2d3343FF);
+    border-style: solid;
+    border-width: 1px;
 }
 
 .jmenu-container a:hover,
@@ -38,8 +40,8 @@
 }
 
 .jmenu-dropdown-content {
-    border-end-start-radius: 2pt;
-    border-end-end-radius: 2pt;
+    border-end-start-radius: 4pt;
+    border-end-end-radius: 4pt;
 }
 
 .jmenu-dropdown-content a {

@@ -27,6 +27,7 @@ SOFTWARE.
  */
 export class JWindow {
     static windowUrl = import.meta.resolve("../../window.html");
+    static maximizedMargin = 32;
     static zIndex = 0;
     static #defaultIconPath;
     static visibleWindows = new Set();
@@ -47,13 +48,16 @@ export class JWindow {
     isDismissableOutside;
     isModal = false;
     menuBar;
+    lastLeft;
+    lastTop;
+    isMaximized=false;
 
     /**
      * Instantiate a window
      * DO NOT USE this directly, instead use the static methods like Window.createWindow()
      */
     constructor() {
-        
+
     }
 
     /**
@@ -162,7 +166,7 @@ export class JWindow {
     }
 
     async init(windowContent, content) {
-        JWindow.setupListener();
+        JWindow.setupListeners();
         await this.createRoot(windowContent);
         this.setupControls();
         this.setupIcon();
@@ -311,6 +315,11 @@ export class JWindow {
      */
     show() {
         this.windowPanel.style.display = "block";
+        let width = window.innerWidth - JWindow.maximizedMargin*2;
+        let height = window.innerHeight - JWindow.maximizedMargin*2;
+        this.windowPanel.style.left = (width/2 - this.windowPanel.clientWidth/2) + "px";
+        this.windowPanel.style.top = (height/2 - this.windowPanel.clientHeight/2) + "px";
+
         JWindow.zIndex += 2;
         this.windowPanel.style.zIndex = JWindow.zIndex;
         if (this.isModal)
@@ -321,8 +330,8 @@ export class JWindow {
             this.onShow();
     }
 
-    static setupListener() {
-        if(JWindow.globalListenerSet)
+    static setupListeners() {
+        if (JWindow.globalListenerSet)
             return;
         window.addEventListener("mousedown", function (event) {
             let topWindow = JWindow.getTopWindow();
@@ -330,10 +339,38 @@ export class JWindow {
                 let hit = JWindow.contains(jwindow.root, event.target);
                 if (jwindow.isDismissableOutside && !hit) {
                     jwindow.hide.call(jwindow);
-                } 
-                else if(hit && topWindow != jwindow && !topWindow.isModal) {
+                }
+                else if (hit && topWindow != jwindow && !topWindow.isModal) {
                     JWindow.zIndex += 2;
                     jwindow.windowPanel.style.zIndex = JWindow.zIndex;
+                }
+            }
+        });
+        window.addEventListener("dblclick", function (event) {
+            let topWindow = JWindow.getTopWindow();
+            for (let jwindow of JWindow.visibleWindows) {
+                let hit = event.target.matches('.jwindow-title-bar');
+                if (hit && topWindow == jwindow) {
+                    if(jwindow.isMaximized) {
+                        jwindow.windowPanel.style.left = jwindow.lastLeft;
+                        jwindow.windowPanel.style.top = jwindow.lastTop;
+                        jwindow.windowPanel.style.width = jwindow.lastWidth;
+                        jwindow.windowPanel.style.height = jwindow.lastHeight;
+                        jwindow.isMaximized = false;
+                    } else if(jwindow.windowPanel.style.resize == "both") {
+                        jwindow.lastLeft = jwindow.windowPanel.style.left;
+                        jwindow.lastTop = jwindow.windowPanel.style.top;
+                        jwindow.lastWidth = jwindow.windowPanel.style.width;
+                        jwindow.lastHeight = jwindow.windowPanel.style.height;
+
+                        let width = this.window.innerWidth - JWindow.maximizedMargin*2;
+                        let height = this.window.innerHeight - JWindow.maximizedMargin*2;
+                        jwindow.windowPanel.style.left = JWindow.maximizedMargin + "px";
+                        jwindow.windowPanel.style.top = JWindow.maximizedMargin + "px";
+                        jwindow.setWidth(width);
+                        jwindow.setHeight(height);
+                        jwindow.isMaximized = true;
+                    }
                 }
             }
         });

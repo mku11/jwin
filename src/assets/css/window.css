@@ -1,9 +1,6 @@
 .jwindow-panel {
   display: none;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
   overflow: hidden;
   min-width: 300pt;
   background-color: #2d3343FF;
