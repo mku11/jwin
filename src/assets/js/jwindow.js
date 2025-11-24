@@ -60,6 +60,10 @@ export class JWindow {
         return this.root;
     }
 
+    /**
+     * Get the window panel
+     * @returns {Element} The window panel
+     */
     getWindowPanel() {
         return this.windowPanel;
     }
@@ -129,7 +133,7 @@ export class JWindow {
      * Create a window
      * @param {string} title The title
      * @param {string} url The url that contains the html content in the window
-     * @returns The window
+     * @returns {JWindow} The window
      */
     static async createWindowWithURL(title, url) {
         return new Promise((resolve, reject) => {
@@ -239,6 +243,26 @@ export class JWindow {
     }
 
     /**
+     * Set the width
+     * @param {number} value The width
+     */
+    setWidth(value) {
+        this.windowPanel.style.width = value + "px";
+    }
+
+    /**
+     * Set the height
+     * @param {number} value The height
+     */
+    setHeight(value) {
+        this.windowPanel.style.height = value + "px";
+    }
+
+    setResizable(value) {
+        this.windowPanel.style.resize = value ? "both" : "none";
+    }
+
+    /**
      * Allow the windows to be dragged
      * @param {boolean} value True to be able to drag the window
      */
@@ -307,7 +331,7 @@ export class JWindow {
         window.addEventListener("click", function (event) {
             let topWindow = JWindow.getTopWindow();
             for (let jwindow of JWindow.visibleWindows) {
-                let hit = JWindow.contains(jwindow.getRoot(), event.target);
+                let hit = JWindow.contains(jwindow.root, event.target);
                 if (jwindow.isDismissableOutside && !hit) {
                     jwindow.hide.call(jwindow);
                 } 
