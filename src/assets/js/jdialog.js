@@ -40,26 +40,6 @@ export class JDialog extends JWindow {
     secondButton;
 
     /**
-     * Instantiate a dialog box
-     * DO NOT USE this directly, instead use the static methods like Dialog.promptDialog()
-     * @param {string} content The html content of the window
-     * @param {function(string)} buttonListener1 Onclick listener for first button
-     * @param {function(string)} buttonListener2 Onclick listener for second button
-     */
-    init(dialogContent, content, buttonListener1 = null, buttonListener2 = null) {
-        this.isModal = true;
-        this.createRoot(dialogContent, content);
-        this.setupControls();
-        this.setupIcon();
-        this.setupEventListeners();
-        this.#setTextContent(content);
-        this.enableDraggable(true);
-        this.setFirstButton("Ok", buttonListener1);
-        if (buttonListener2 != null)
-            this.setSecondButton("Cancel", buttonListener2);
-    }
-
-    /**
      * Prompt with an editable text box
      * @param {string} title The title
      * @param {string} msg The message
@@ -75,7 +55,7 @@ export class JDialog extends JWindow {
             fetch(JDialog.dialogEditURL).then(async (response) => {
                 let dialogContent = await response.text();
                 let dialog = new JDialog();
-                dialog.init(dialogContent, msg, "Ok", null);
+                await dialog.init(dialogContent, msg, "Ok", null);
                 dialog.setTitle(title);
                 dialog.setValue(value, isFileName, readOnly, isPassword);
                 dialog.setOption(option);
@@ -102,7 +82,7 @@ export class JDialog extends JWindow {
             fetch(JDialog.dialogURL).then(async (response) => {
                 let dialogContent = await response.text();
                 let dialog = new JDialog();
-                dialog.init(dialogContent, msg, "Ok", null);
+                await dialog.init(dialogContent, msg, "Ok", null);
                 dialog.setTitle(title);
                 // add the text boxes
                 var divBody = document.createElement('div');
@@ -165,7 +145,7 @@ export class JDialog extends JWindow {
             fetch(JDialog.dialogURL).then(async (response) => {
                 let dialogContent = await response.text();
                 let dialog = new JDialog();
-                dialog.init(dialogContent, body, null, null);
+                await dialog.init(dialogContent, body, null, null);
                 dialog.setTitle(title);
                 dialog.setFirstButton(buttonLabel1, buttonListener1);
                 dialog.setSecondButton(buttonLabel2, buttonListener2);
@@ -186,7 +166,7 @@ export class JDialog extends JWindow {
             fetch(JDialog.dialogSelectURL).then(async (response) => {
                 let dialogContent = await response.text();
                 let dialog = new JDialog();
-                dialog.init(dialogContent, null, "Ok", null);
+                await dialog.init(dialogContent, null, "Ok", null);
                 dialog.setTitle(title);
 
                 let selection = document.getElementsByName("jdialog-select")[0];
@@ -207,6 +187,19 @@ export class JDialog extends JWindow {
                 dialog.show();
             });
         });
+    }
+    
+    async init(dialogContent, content, buttonListener1 = null, buttonListener2 = null) {
+        this.isModal = true;
+        this.createRoot(dialogContent);
+        this.setupControls();
+        this.setupIcon();
+        this.setupEventListeners();
+        this.#setTextContent(content);
+        this.enableDraggable(true);
+        this.setFirstButton("Ok", buttonListener1);
+        if (buttonListener2 != null)
+            this.setSecondButton("Cancel", buttonListener2);
     }
 
     setupControls() {
