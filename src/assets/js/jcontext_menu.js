@@ -31,19 +31,6 @@ export class JContextMenu extends JWindow {
     static htmlURL = import.meta.resolve("../../context_menu.html");
 
     /**
-     * Instantiate a context menu.
-     * DO NOT USE this directly, instead use the static method ContextMenu.showContextMenu()
-     * @param {} root The root element inside the window
-     */
-    constructor(root) {
-        super(null, root);
-        this.root = root;
-        this.enableDraggable(false);
-        this.enableDismissable(false);
-        this.enableDismissableOutside(true);
-    }
-
-    /**
      * Display a context menu
      * @param {string} title 
      * @param {any[]} menu 
@@ -53,36 +40,54 @@ export class JContextMenu extends JWindow {
     static showContextMenu(title, menu, x, y) {
         setTimeout(() => {
             fetch(JContextMenu.htmlURL).then(async (response) => {
-                let docBody = document.getElementsByTagName("body")[0];
-                var div = document.createElement('div');
-                div.id = "jcontext-menu-" + Math.floor(Math.random() * 1000000);
-                div.innerHTML = await response.text();
-                let contextMenuDiv = div.getElementsByClassName('jcontext-menu-content')[0];
-                for(let [k,v] of Object.entries(menu)) {
-                    let menuItemDiv = document.createElement('a');
-                    let menuItemImage = document.createElement("img");
-                    let menuItemText = document.createTextNode(v.name);
-                    menuItemImage.classList.add("jmenu-item-image");
-                    menuItemImage.classList.add("jcontext-menu-item-image");
-                    menuItemImage.src = v.icon;
-                    menuItemDiv.style.cursor = "pointer";
-                    menuItemDiv.appendChild(menuItemImage);
-                    menuItemDiv.onclick = () => {
-                        dialog.hide();
-                        v.callback();
-                    };
-                    menuItemDiv.append(menuItemText);
-                    contextMenuDiv.appendChild(menuItemDiv);
-                }
-                docBody.appendChild(div);
-                let dialog = new JContextMenu(div);
-
+                let contextMenuContent = await response.text();
+                let dialog = new JContextMenu();
+                await dialog.init(contextMenuContent, menu);
                 dialog.setTitle(title);
                 dialog.show();
                 dialog.getWindowPanel().style.left = x + "px";
                 dialog.getWindowPanel().style.top = y + "px";
             });
         });
+    }
+
+    async init(contextMenuContent, menu) {
+        await this.createRoot(contextMenuContent);
+        this.setupControls();
+        this.setupIcon();
+        this.setMenu(menu);
+        this.enableDraggable(false);
+        this.enableDismissable(false);
+        this.enableDismissableOutside(true);
+    }
+
+    async createRoot(contextMenuContent) {
+        let docBody = document.getElementsByTagName("body")[0];
+        var div = document.createElement('div');
+        div.id = "jcontext-menu-" + Math.floor(Math.random() * 100000000);
+        div.innerHTML = contextMenuContent;
+        docBody.appendChild(div);
+        this.root = div;
+    }
+
+    setMenu(menu) {
+        let contextMenuDiv = this.root.getElementsByClassName('jcontext-menu-content')[0];
+        for (let [k, v] of Object.entries(menu)) {
+            let menuItemDiv = document.createElement('a');
+            let menuItemImage = document.createElement("img");
+            let menuItemText = document.createTextNode(v.name);
+            menuItemImage.classList.add("jmenu-item-image");
+            menuItemImage.classList.add("jcontext-menu-item-image");
+            menuItemImage.src = v.icon;
+            menuItemDiv.style.cursor = "pointer";
+            menuItemDiv.appendChild(menuItemImage);
+            menuItemDiv.onclick = () => {
+                this.hide();
+                v.callback();
+            };
+            menuItemDiv.append(menuItemText);
+            contextMenuDiv.appendChild(menuItemDiv);
+        }
     }
 
     setupControls() {
