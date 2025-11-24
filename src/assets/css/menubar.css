@@ -56,3 +56,9 @@
   height: 1.5 em;
   padding-right: 4pt;
 }
+
+.jmenu-unselectable {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
