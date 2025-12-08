@@ -27,9 +27,7 @@
 
 .jmenu-container {
     background-color: white;
-    background-image: linear-gradient(to bottom, #2d3343BB, #2d3343FF);
-    border-style: solid;
-    border-width: 1px;
+    background-image: linear-gradient(to bottom, #2d3343BB, #3b435b);
 }
 
 .jmenu-container a:hover,
