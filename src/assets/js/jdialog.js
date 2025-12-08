@@ -63,7 +63,7 @@ export class JDialog extends JWindow {
                     if (OnEdit != null)
                         OnEdit(dialog.input.value, dialog.option.checked);
                 });
-                dialog.show();
+                await dialog.show();
             });
         });
     }
@@ -106,7 +106,7 @@ export class JDialog extends JWindow {
                         OnEdit(texts);
                     }
                 });
-                dialog.show();
+                await dialog.show();
             });
         });
     }
@@ -149,7 +149,7 @@ export class JDialog extends JWindow {
                 dialog.setTitle(title);
                 dialog.setFirstButton(buttonLabel1, buttonListener1);
                 dialog.setSecondButton(buttonLabel2, buttonListener2);
-                dialog.show();
+                await dialog.show();
             });
         });
     }
@@ -184,7 +184,7 @@ export class JDialog extends JWindow {
                     }
                 });
                 dialog.setSecondButton("Cancel");
-                dialog.show();
+                await dialog.show();
             });
         });
     }

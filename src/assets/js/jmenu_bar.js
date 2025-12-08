@@ -27,6 +27,7 @@ SOFTWARE.
  */
 export class JMenuBar {
   #items = [];
+  #widgets = [];
   #lastItem;
   menuContainer;
   static globalListenerSet = false;
@@ -63,7 +64,13 @@ export class JMenuBar {
     this.#items.push(item);
   }
 
-  getMenuBarElement() {
+  addMenuWidget(widget) {
+    if (!(widget instanceof JMenuWidget))
+      throw new Error("Can only add JMenuWidget at the top level");
+    this.#widgets.push(widget);
+  }
+
+  async getMenuBarElement() {
     let menuContainer = document.createElement("div");
     menuContainer.classList.add("jmenu-container");
     for (let item of this.#items) {
@@ -99,6 +106,13 @@ export class JMenuBar {
         menuSubItemLabel.innerText = subItem.title;
         menuSubItem.appendChild(menuSubItemLabel);
       }
+    }
+    for (let widget of this.#widgets) {
+      let menuWidgetContainer = document.createElement("div");
+      menuWidgetContainer.classList.add(widget.name);
+      menuWidgetContainer.classList.add("jmenu-widget");
+      menuWidgetContainer.innerHTML = await widget.onGetContent();
+      menuContainer.appendChild(menuWidgetContainer);
     }
     this.menuContainer = menuContainer;
     return menuContainer;
@@ -146,6 +160,27 @@ export class JMenuItem {
    */
   getChildren() {
     return this.#children;
+  }
+}
+
+/**
+ * Top level menu widget
+ */
+export class JMenuWidget {
+  name;
+  onGetContent;
+  onAttached;
+
+  /**
+   * Create a menu widget.
+   * @param {string} name The name
+   * @param {function()} onGetContent The callback that gets the content
+   * @param {function()} onAttached Callback when the widget gets attached
+   */
+  constructor(name, onGetContent, onAttached) {
+    this.name = name;
+    this.onGetContent = onGetContent;
+    this.onAttached = onAttached;
   }
 }
 

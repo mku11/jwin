@@ -44,7 +44,7 @@ export class JContextMenu extends JWindow {
                 let dialog = new JContextMenu();
                 await dialog.init(contextMenuContent, menu);
                 dialog.setTitle(title);
-                dialog.show();
+                await dialog.show();
                 dialog.getWindowPanel().style.left = x + "px";
                 dialog.getWindowPanel().style.top = y + "px";
             });

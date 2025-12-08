@@ -313,7 +313,7 @@ export class JWindow {
     /**
      * Display the window
      */
-    show() {
+    async show() {
         this.windowPanel.style.display = "block";
         let width = window.innerWidth - JWindow.maximizedMargin*2;
         let height = window.innerHeight - JWindow.maximizedMargin*2;
@@ -324,7 +324,7 @@ export class JWindow {
         this.windowPanel.style.zIndex = JWindow.zIndex;
         if (this.isModal)
             this.disableSiblings(true);
-        this.setupMenu();
+        await this.setupMenu();
         JWindow.visibleWindows.add(this);
         if (this.onShow != null)
             this.onShow();
@@ -414,10 +414,10 @@ export class JWindow {
         }
     }
 
-    setupMenu() {
+    async setupMenu() {
         if (!this.menuBar)
             return;
-        let el = this.menuBar.getMenuBarElement();
+        let el = await this.menuBar.getMenuBarElement();
         this.menu.appendChild(el);
     }
 }
